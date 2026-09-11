@@ -16,12 +16,17 @@ for (const thought of thoughts.filter((x) => x.published)) {
   const file = path.join(dist,"thoughts",thought.slug,"index.html");
   let html; try { html = await fs.readFile(file,"utf8"); } catch { fail(`思想ページがありません: ${thought.slug}`); }
   const philosopher = philosopherMap.get(thought.philosopherId);
-  const expected = ["思想をもとにした現代語の要約",`/philosophers/${philosopher.slug}/`,`<script type=\"application/ld+json\"`];
+  const expected = [`/philosophers/${philosopher.slug}/`,`<script type=\"application/ld+json\"`];
   expected.push(...thought.moodIds.map((id) => `/moods/${moodSlug[id]}/`));
   expected.push(...thought.areaIds.map((id) => `/areas/${areaSlug[id]}/`));
   expected.push(...thought.sourceRefs.map((id) => sourceMap.get(id).url));
   for (const value of expected) if (!html.includes(value)) fail(`${thought.slug} に必要な表示・リンクがありません: ${value}`);
 }
+
+const homeHtml = await fs.readFile(path.join(dist,"index.html"),"utf8");
+if (homeHtml.includes("思想をもとにした現代語の要約")) fail("トップのカードに編集方針ラベルが重複しています");
+const aboutHtml = await fs.readFile(path.join(dist,"about/index.html"),"utf8");
+if ((aboutHtml.match(/思想をもとにした現代語の要約/g) || []).length !== 1) fail("現代語要約の説明はaboutページに1回だけ必要です");
 
 const required = ["index.html","search/index.html","saved/index.html","about/index.html","safety/index.html","404.html","robots.txt","rss.xml","sitemap-index.xml","pagefind/pagefind.js"];
 for (const relative of required) { try { await fs.access(path.join(dist,relative)); } catch { fail(`${relative} がありません`); } }

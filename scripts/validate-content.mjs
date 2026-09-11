@@ -13,8 +13,8 @@ const unique = (items, key, label) => {
   for (const item of items) { if (!item[key]) fail(`${label}に空の${key}`); if (seen.has(item[key])) fail(`${label}の${key}が重複: ${item[key]}`); seen.add(item[key]); }
 };
 unique(sources,"id","出典"); unique(philosophers,"id","哲学者"); unique(philosophers,"slug","哲学者"); unique(thoughts,"id","思想"); unique(thoughts,"slug","思想");
-if (philosophers.filter((x) => x.published).length !== 8) fail("公開哲学者は8件である必要があります");
-if (thoughts.filter((x) => x.published).length !== 32) fail("公開思想カードは32件である必要があります");
+if (philosophers.filter((x) => x.published).length !== 9) fail("公開哲学者は9件である必要があります");
+if (thoughts.filter((x) => x.published).length !== 36) fail("公開思想カードは36件である必要があります");
 const sourceSet = new Set(sources.map((x) => x.id));
 const philosopherSet = new Set(philosophers.map((x) => x.id));
 for (const source of sources) {
@@ -37,6 +37,7 @@ for (const thought of thoughts) {
   if (!thought.themeTags?.length) fail(`思想 ${thought.id} にテーマタグがありません`);
   if (!["summary","direct_quote","editorial"].includes(thought.contentKind)) fail(`思想 ${thought.id} のcontentKindが不正です`);
   if (thought.contentKind === "direct_quote") fail(`MVPでは権利確認済みの直接引用を登録していません: ${thought.id}`);
+  if (thought.explanation.length < 95 || thought.explanation.length > 180) fail(`思想 ${thought.id} の解説は読みやすい95〜180文字にしてください（現在${thought.explanation.length}文字）`);
 }
 for (const [id,count] of counts) if (count !== 4) fail(`${id} の思想カードは4件ではなく${count}件です`);
 

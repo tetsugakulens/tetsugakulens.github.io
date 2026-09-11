@@ -9,6 +9,8 @@ const sources = await getCollection("sources");
 const sourceMap = new Map(sources.map((x) => [x.id, x]));
 const title = `${philosopher.data.nameJa}の哲学｜悩みに届く4つの考え｜哲学レンズ`;
 const description = `${philosopher.data.oneLine} ${philosopher.data.story}`.slice(0, 150);
+const nameLength = [...philosopher.data.nameJa].length;
+const nameSize = nameLength >= 7 ? "name-long" : nameLength >= 5 ? "name-medium" : "name-short";
 const jsonLd = { "@context":"https://schema.org", "@type":"Article", headline:`${philosopher.data.nameJa}の哲学`, description, about:{"@type":"Person",name:philosopher.data.nameJa,alternateName:philosopher.data.nameOriginal}, mainEntityOfPage:new URL(Astro.url.pathname,Astro.site).href };
 ---
 <BaseLayout {title} {description}>
@@ -16,7 +18,7 @@ const jsonLd = { "@context":"https://schema.org", "@type":"Article", headline:`$
   <article class="content-shell wide" data-pagefind-body>
     <nav class="breadcrumbs" aria-label="パンくず"><a href="/">ホーム</a> / <span>哲学者</span> / <span>{philosopher.data.nameJa}</span></nav>
     <p class="overline">{philosopher.data.era} · {philosopher.data.region}</p>
-    <h1 class="name-display">{philosopher.data.nameJa}</h1><p class="original">{philosopher.data.nameOriginal}</p>
+    <h1 class={`name-display ${nameSize}`}>{philosopher.data.nameJa}</h1><p class="original">{philosopher.data.nameOriginal}</p>
     <p class="lead">{philosopher.data.oneLine}</p><p>{philosopher.data.story}</p>
     <blockquote>{philosopher.data.centralQuestion}</blockquote>
     <section><h2>{philosopher.data.nameJa}から届く4つの見方</h2><ThoughtList {thoughts} philosophers={[philosopher]} /></section>

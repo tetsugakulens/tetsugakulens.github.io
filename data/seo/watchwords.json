@@ -9,6 +9,7 @@
     {"keyword":"失敗が怖い 哲学","targetPath":"/moods/fear-of-failure/","priority":"medium","status":"active","rank":null},
     {"keyword":"人間関係 哲学","targetPath":"/areas/relationships/","priority":"medium","status":"active","rank":null},
     {"keyword":"進路 悩み 哲学","targetPath":"/areas/career/","priority":"medium","status":"active","rank":null},
-    {"keyword":"エピクテトス 考え方","targetPath":"/philosophers/epictetus/","priority":"medium","status":"active","rank":null}
+    {"keyword":"エピクテトス 考え方","targetPath":"/philosophers/epictetus/","priority":"medium","status":"active","rank":null},
+    {"keyword":"ニーチェ 生き方","targetPath":"/philosophers/nietzsche/","priority":"medium","status":"active","rank":null}
   ]
 }

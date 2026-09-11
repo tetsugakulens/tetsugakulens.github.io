@@ -25,7 +25,6 @@ const jsonLd = {
   <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <article class="content-shell" data-pagefind-body>
     <nav aria-label="パンくず"><a href="/">ホーム</a> / <span>考え</span></nav>
-    <p class="kind">思想をもとにした現代語の要約</p>
     <p class="eyebrow">{thought.data.empathy}</p>
     <h1>{thought.data.statement}</h1>
     <p class="lead">{thought.data.explanation}</p>
@@ -37,7 +36,7 @@ const jsonLd = {
       {thought.data.areaIds.map((id: string) => { const item = areas.find((a) => a.id === id); return item && <a href={`/areas/${item.slug}/`}>{areaName(id)}</a>; })}
       <a href={`/philosophers/${philosopher.data.slug}/`}>{philosopher.data.nameJa}</a>
     </div></section>
-    <section aria-labelledby="sources"><h2 id="sources">出典と編集方針</h2><p>この文章は直接引用ではなく、原典を参照して編集部が現代語で要約したものです。</p><ul>
+    <section aria-labelledby="sources"><h2 id="sources">参照した原典・研究資料</h2><ul>
       {thought.data.sourceRefs.map((ref: { id: string }) => { const source = sourceMap.get(ref.id); return source && <li><a href={source.data.url} rel="external">{source.data.author}『{source.data.work}』{source.data.section}</a></li>; })}
     </ul></section>
   </article>

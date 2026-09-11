@@ -7,7 +7,8 @@ const philosophers = (await getCollection("philosophers")).filter((x) => x.data.
   <article class="content-shell" data-pagefind-body>
     <p class="overline">この場所について</p><h1>答えではなく、見方をひとつ。</h1>
     <p class="lead">哲学レンズは、悩みの中で視野が狭くなったとき、哲学者の問いを借りて見方を増やすための静かな場所です。</p>
-    <h2>文章のつくり方</h2><p>カードの文章は、原典や信頼できる研究資料を確認し、現代の生活に向けて独自に書いた要約です。現代日本語訳を転載せず、出典と章節を各ページに示します。原典の言葉そのものではないため、必ず「思想をもとにした現代語の要約」と表示します。</p>
+    <aside class="editorial-note"><strong>文章について</strong><p>サイト内のカードはすべて「思想をもとにした現代語の要約」です。</p></aside>
+    <h2>文章のつくり方</h2><p>原典や信頼できる研究資料を確認し、現代の生活に向けて独自に書いています。現代日本語訳は転載せず、参照した出典と章節を各個別ページに示します。</p>
     <h2>哲学者に会う</h2><div class="philosopher-directory">{philosophers.map((item) => <a href={`/philosophers/${item.data.slug}/`}><strong>{item.data.nameJa}</strong><span>{item.data.oneLine}</span></a>)}</div>
     <h2>できないこと</h2><p>ここは医療・心理相談・診断のサービスではなく、危機への緊急対応もできません。つらさが強いときは、<a href="/safety/">公的な相談先</a>を利用してください。</p>
   </article>

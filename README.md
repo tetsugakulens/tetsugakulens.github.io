@@ -26,7 +26,7 @@ pnpm exec pagefind --site dist --serve
 pnpm test
 ```
 
-このコマンドは全32カードの参照・分類・重複を検証し、Astroの型チェック、本番ビルド、Pagefind生成を実行します。
+このコマンドは全36カードの参照・分類・重複・解説文の長さを検証し、Astroの型チェック、本番ビルド、Pagefind生成を実行します。
 
 ## SEO Rank Watch
 

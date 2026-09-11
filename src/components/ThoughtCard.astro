@@ -3,6 +3,11 @@ import SaveButton from "./SaveButton.astro";
 import { areaName, moodName } from "../lib/taxonomy";
 const { thought, philosopher, index, total } = Astro.props;
 const tone = index % 4;
+const nameLength = [...philosopher.data.nameJa].length;
+const nameSize = nameLength >= 7 ? "name-long" : nameLength >= 5 ? "name-medium" : "name-short";
+const sentences = thought.data.explanation.match(/[^。]+。?/g) ?? [thought.data.explanation];
+const breakAt = Math.ceil(sentences.length / 2);
+const explanationParts = [sentences.slice(0, breakAt).join(""), sentences.slice(breakAt).join("")].filter(Boolean);
 ---
 <article class={`thought-card tone-${tone}`} role="article" aria-posinset={index + 1} aria-setsize={total} tabindex="0" data-feed-item>
   <div class="light" aria-hidden="true"></div>
@@ -10,13 +15,12 @@ const tone = index % 4;
     <header class="philosopher-lockup">
       <p class="eyebrow">{thought.data.empathy}</p>
       <p class="counter" aria-label={`${total}件中${index + 1}件目`}>{String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</p>
-      <h2>{philosopher.data.nameJa}</h2>
+      <h2 class={nameSize}><a href={`/philosophers/${philosopher.data.slug}/`} aria-label={`${philosopher.data.nameJa}のページへ`}>{philosopher.data.nameJa}</a></h2>
       <p class="original">{philosopher.data.nameOriginal}</p>
     </header>
     <div class="thought-copy">
-      <p class="kind">思想をもとにした現代語の要約</p>
       <p class="statement">{thought.data.statement}</p>
-      <p class="explanation">{thought.data.explanation}</p>
+      <div class="explanation">{explanationParts.map((part) => <p>{part}</p>)}</div>
       <div class="tags" aria-label="分類">
         {thought.data.moodIds.map((id: string) => <span>{moodName(id)}</span>)}
         {thought.data.areaIds.map((id: string) => <span>{areaName(id)}</span>)}
