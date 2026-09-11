@@ -21,7 +21,7 @@ const jsonLd = {
   dateModified: thought.data.reviewedAt.toISOString(), mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).href,
 };
 ---
-<BaseLayout {title} {description}>
+<BaseLayout {title} {description} ogType="article">
   <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <article class="content-shell" data-pagefind-body>
     <nav aria-label="パンくず"><a href="/">ホーム</a> / <span>考え</span></nav>

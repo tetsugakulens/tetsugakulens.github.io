@@ -7,14 +7,19 @@ export function getStaticPaths() { return areas.map((area) => ({params:{slug:are
 const { area } = Astro.props;
 const thoughts = (await getCollection("thoughts")).filter((x) => x.data.published && x.data.areaIds.includes(area.id));
 const philosophers = await getCollection("philosophers");
+const relatedPhilosophers = [...new Set(thoughts.map((thought) => thought.data.philosopherId.id))].map((id) => philosophers.find((philosopher) => philosopher.id === id)).filter(Boolean);
 const title = `${area.name}の悩みに役立つ哲学｜哲学レンズ`;
 const description = `${area.name}について考えが絡まったときに、見方を増やす哲学者の考えを短い言葉から探せます。`;
+const jsonLd = { "@context":"https://schema.org", "@type":"ItemList", name:`${area.name}の悩みに役立つ哲学`, numberOfItems:thoughts.length, itemListElement:thoughts.map((thought,index) => ({ "@type":"ListItem", position:index+1, name:thought.data.statement, url:new URL(`/thoughts/${thought.data.slug}/`,Astro.site).href })) };
 ---
 <BaseLayout {title} {description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <div class="content-shell wide" data-pagefind-body>
-    <nav class="breadcrumbs" aria-label="パンくず"><a href="/">ホーム</a> / <span>生活領域</span> / <span>{area.name}</span></nav>
-    <p class="overline">生活領域から探す</p><h1>{area.name}</h1>
+    <nav class="breadcrumbs" aria-label="パンくず"><a href="/">ホーム</a> / <span>悩んでいること</span> / <span>{area.name}</span></nav>
+    <p class="overline">悩んでいることから探す</p><h1>{area.name}</h1>
     <p class="lead">正解を押しつけず、いまの状況を見つめるための哲学。</p>
+    <section aria-labelledby="philosophers"><h2 id="philosophers">この悩みを考える哲学者</h2><div class="related-philosophers">{relatedPhilosophers.map((philosopher) => philosopher && <a href={`/philosophers/${philosopher.data.slug}/`}><strong>{philosopher.data.nameJa}</strong><span>{philosopher.data.oneLine}</span></a>)}</div></section>
+    <h2>この悩みに届く考え</h2>
     <ThoughtList {thoughts} {philosophers} />
   </div>
 </BaseLayout>

@@ -1,6 +1,9 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
-<BaseLayout title="ページが見つかりません｜哲学レンズ" description="お探しのページは見つかりませんでした。">
-  <div class="content-shell error-page"><p class="overline">404</p><h1>道に迷いました。</h1><p class="lead">知らない場所に着いたことから、別の問いが始まるかもしれません。</p><a class="deep-link" href="/">フィードへ戻る</a></div>
+<BaseLayout title="ページが見つかりません｜哲学レンズ" description="お探しのページは見つかりませんでした。悩みや気持ちから、別の哲学の言葉を探せます。">
+  <div class="content-shell error-page"><p class="overline">404 · ページが見つかりません</p><h1>ここから、悩みに合う言葉を探せます。</h1><p class="lead">URLが変わったか、ページが削除された可能性があります。</p>
+    <form class="problem-search" action="/search/" method="get"><label for="error-search">悩みを言葉で入力</label><div class="search-composer"><input id="error-search" name="q" type="search" placeholder="例：将来が不安" required /><button type="submit">哲学者を探す</button></div></form>
+    <div class="error-actions"><a class="deep-link" href="/#find">気持ちから探す</a><a href="/">トップへ戻る</a><a href="/saved/">保存した言葉を見る</a></div>
+  </div>
 </BaseLayout>

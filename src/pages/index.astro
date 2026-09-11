@@ -8,59 +8,45 @@ const philosophers = (await getCollection("philosophers")).filter((item) => item
 const unsortedThoughts = (await getCollection("thoughts")).filter((item) => item.data.published);
 const thoughts = Array.from({length:4},(_,round) => philosophers.flatMap((philosopher) => unsortedThoughts.filter((thought) => thought.data.philosopherId.id === philosopher.id)[round] || [])).flat();
 const philosopherMap = new Map(philosophers.map((item) => [item.id, item]));
-const moodGuides = moods.map((mood) => ({
-  ...mood,
-  philosophers: philosophers.filter((philosopher) => unsortedThoughts.some((thought) => thought.data.philosopherId.id === philosopher.id && thought.data.moodIds.includes(mood.id))),
-}));
+const homeJsonLd = { "@context":"https://schema.org", "@type":"ItemList", name:"悩みから探せる哲学", numberOfItems:moods.length, itemListElement:moods.map((mood,index) => ({ "@type":"ListItem", position:index+1, name:mood.name, url:new URL(`/moods/${mood.slug}/`,Astro.site).href })) };
 ---
 <BaseLayout title="哲学レンズ｜いまの気持ちに、哲学の見方を" description="仕事、人間関係、恋愛、将来などの悩みを、哲学者の考えをもとにした短い言葉から静かに見つめ直す縦型フィード。">
-  <section class="feed-intro" id="find" aria-labelledby="feed-title">
-    <p>いまの気持ちに、別の見方を。</p>
-    <h1 id="feed-title">考えを探す</h1>
-    <div class="filter-row" aria-label="今の気持ち">
-      <button class="filter-chip active" type="button" data-filter="all">すべて</button>
-      {moods.map((mood) => <button class="filter-chip" type="button" data-filter={mood.id}>{mood.name}</button>)}
-    </div>
-    <details class="area-picker"><summary>生活領域から絞る</summary><div class="filter-row">{areas.map((area) => <a class="filter-chip" href={`/areas/${area.slug}/`}>{area.name}</a>)}</div></details>
-    <details class="area-picker"><summary>哲学者に会う</summary><div class="filter-row">{philosophers.map((item) => <a class="filter-chip" href={`/philosophers/${item.data.slug}/`}>{item.data.nameJa}</a>)}</div></details>
-    <div class="philosopher-guide" aria-live="polite">
-      <div data-guide="all">
-        <p><strong>気持ちを選ぶと、その悩みを考える哲学者が現れます。</strong></p>
-        <p>まずは、いちばん近い言葉を一つ選んでください。</p>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(homeJsonLd)} />
+  <section class="discovery-hub" id="find" aria-labelledby="find-title">
+    <p class="overline">悩みから哲学者を見つける</p>
+    <h1 id="find-title">いま、何に悩んでいますか？</h1>
+    <form class="problem-search" action="/search/" method="get">
+      <label for="problem-input">悩みを言葉で入力</label>
+      <div class="search-composer">
+        <input id="problem-input" name="q" type="search" inputmode="search" placeholder="例：周りと比べてしまう、進路が不安" autocomplete="off" required />
+        <button type="submit">哲学者を探す</button>
       </div>
-      {moodGuides.map((guide) => <div data-guide={guide.id} hidden>
-        <p><strong>「{guide.name}」を考える哲学者</strong></p>
-        <div class="guide-links">{guide.philosophers.map((item) => <a href={`/philosophers/${item.data.slug}/`}>{item.data.nameJa}<small>{item.data.oneLine}</small></a>)}</div>
-      </div>)}
-    </div>
-    <a class="text-search-link" href="/search/">言葉で詳しく検索する <span aria-hidden="true">→</span></a>
-    <p class="gesture-hint">下へスクロール <span aria-hidden="true">↓</span></p>
+      <p>短い言葉で大丈夫です。入力した悩みは保存・送信されません。</p>
+    </form>
+    <section class="choice-section" aria-labelledby="feeling-heading">
+      <h2 id="feeling-heading">言葉にしづらければ、近い気持ちを選ぶ</h2>
+      <div class="choice-grid mood-choices">{moods.map((mood) => <a href={`/moods/${mood.slug}/`}><span>{mood.name}</span><small>合う哲学者を見る</small></a>)}</div>
+    </section>
+    <section class="choice-section" aria-labelledby="situation-heading">
+      <h2 id="situation-heading">どんなことで悩んでいますか？</h2>
+      <div class="choice-grid area-choices">{areas.map((area) => <a href={`/areas/${area.slug}/`}>{area.name}<span aria-hidden="true">→</span></a>)}</div>
+    </section>
+    <section class="choice-section" aria-labelledby="philosopher-heading">
+      <h2 id="philosopher-heading">知っている哲学者から探す</h2>
+      <div class="choice-grid philosopher-choices">{philosophers.map((item) => <a href={`/philosophers/${item.data.slug}/`}>{item.data.nameJa}</a>)}</div>
+    </section>
+    <a class="browse-link" href="#philosophy-feed">選ばずに言葉を眺める <span aria-hidden="true">↓</span></a>
   </section>
+  <section class="feed-heading" id="philosophy-feed"><p class="overline">36の見方</p><h2>言葉を眺める</h2><p>気になった言葉は、保存してあとから読み返せます。</p></section>
   <section class="feed" role="feed" aria-label="哲学の考え" aria-busy="false">
     {thoughts.map((thought, index) => {
       const philosopher = philosopherMap.get(thought.data.philosopherId.id);
       return philosopher && <div data-moods={thought.data.moodIds.join(" ")}><ThoughtCard {thought} {philosopher} {index} total={thoughts.length} /></div>;
     })}
   </section>
-  <p class="empty-state" hidden data-empty>その気持ちのカードは、これから増やしていきます。</p>
   <nav class="mood-directory" aria-label="気持ち別ページ">{moods.map((mood) => <a href={`/moods/${mood.slug}/`}>{mood.name}</a>)}</nav>
   <script>
     const items = [...document.querySelectorAll<HTMLElement>("[data-feed-item]")];
-    document.querySelectorAll<HTMLButtonElement>("[data-filter]").forEach((button) => {
-      button.addEventListener("click", () => {
-        const filter = button.dataset.filter;
-        document.querySelectorAll("[data-filter]").forEach((item) => item.classList.toggle("active", item === button));
-        document.querySelectorAll<HTMLElement>("[data-guide]").forEach((guide) => { guide.hidden = guide.dataset.guide !== filter; });
-        let visible = 0;
-        items.forEach((item) => {
-          const wrapper = item.parentElement!;
-          const show = filter === "all" || wrapper.dataset.moods?.split(" ").includes(filter || "");
-          wrapper.hidden = !show;
-          if (show) visible++;
-        });
-        document.querySelector<HTMLElement>("[data-empty]")!.hidden = visible > 0;
-      });
-    });
     document.addEventListener("keydown", (event) => {
       if (!["ArrowDown", "ArrowUp", "PageDown", "PageUp"].includes(event.key)) return;
       const visible = items.filter((item) => !item.parentElement?.hidden);

@@ -1,8 +1,17 @@
 ---
 import "../styles/global.css";
-interface Props { title: string; description: string; canonicalPath?: string; }
-const { title, description, canonicalPath = Astro.url.pathname } = Astro.props;
-const canonical = new URL(canonicalPath, Astro.site);
+interface Props { title: string; description: string; canonicalPath?: string; ogType?: "website" | "article"; }
+const { title, description, canonicalPath = Astro.url.pathname, ogType = "website" } = Astro.props;
+const site = Astro.site ?? new URL("https://example.invalid/");
+const canonical = new URL(canonicalPath, site);
+const ogImage = new URL("/og.png", site);
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "WebSite", "@id": `${site.href}#website`, name: "哲学レンズ", url: site.href, inLanguage: "ja", potentialAction: { "@type": "SearchAction", target: `${new URL("/search/", site).href}?q={search_term_string}`, "query-input": "required name=search_term_string" } },
+    { "@type": "WebPage", "@id": `${canonical.href}#webpage`, name: title, description, url: canonical.href, inLanguage: "ja", isPartOf: { "@id": `${site.href}#website` } },
+  ],
+};
 ---
 <!doctype html>
 <html lang="ja">
@@ -13,12 +22,22 @@ const canonical = new URL(canonicalPath, Astro.site);
     <meta name="description" content={description} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content="ja_JP" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:site_name" content="哲学レンズ" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="哲学レンズ — 悩みに、別の見方を。" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content="哲学レンズ — 悩みに、別の見方を。" />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
     <title>{title}</title>
   </head>
   <body>
@@ -26,7 +45,7 @@ const canonical = new URL(canonicalPath, Astro.site);
     <header class="site-header" data-pagefind-ignore>
       <a class="brand" href="/" aria-label="哲学レンズ ホーム">哲学レンズ</a>
       <nav aria-label="主なメニュー">
-        <a href="/#find">悩みから</a><a href="/search/">検索</a><a href="/saved/">保存</a>
+        <a href="/#find">悩みを探す</a><a href="/search/">文字で検索</a><a href="/saved/">保存</a>
       </nav>
     </header>
     <main id="main"><slot /></main>

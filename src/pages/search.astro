@@ -1,35 +1,50 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+const examples = ["周りと比べてしまう", "進路が不安", "人間関係に疲れた", "失敗が怖い", "やる気が出ない", "生きる意味"];
 ---
-<BaseLayout title="哲学を探す｜哲学レンズ" description="悩み、気持ち、生活領域、哲学者名から、哲学レンズの考えを横断検索できます。">
+<BaseLayout title="悩みから哲学者を探す｜哲学レンズ" description="いま抱えている悩みや気持ちを入力して、自分に合う哲学者と考え方を見つけられます。">
   <div class="content-shell wide" data-pagefind-body data-pagefind-ignore>
-    <p class="overline">言葉から見つける</p><h1>哲学を探す</h1>
-    <label class="search-label" for="search-input">気持ち・悩み・哲学者名</label>
-    <input class="search-input" id="search-input" type="search" inputmode="search" placeholder="例：失敗が怖い、進路、老子" autocomplete="off" />
+    <nav class="breadcrumbs" aria-label="パンくず"><a href="/">ホーム</a> / <span>悩みから探す</span></nav>
+    <p class="overline">悩みから哲学者を見つける</p><h1>どんなことで悩んでいますか？</h1>
+    <p class="lead">うまく文章にしなくても大丈夫です。気になる言葉を短く入力してください。</p>
+    <form class="problem-search search-page-form" data-search-form>
+      <label for="search-input">悩みを言葉で入力</label>
+      <div class="search-composer"><input class="search-input" id="search-input" name="q" type="search" inputmode="search" placeholder="例：失敗が怖い、進路が不安" autocomplete="off" /><button type="submit">探す</button></div>
+    </form>
+    <div class="quick-searches" aria-label="よくある悩み">{examples.map((example) => <a href={`/search/?q=${encodeURIComponent(example)}`}>{example}</a>)}</div>
     <p class="search-status" aria-live="polite" data-search-status>言葉を入力してください。</p>
     <div class="search-results" data-search-results></div>
-    <noscript><p>検索にはJavaScriptが必要です。<a href="/">フィード</a>、気持ち別、生活領域別、哲学者別のページはJavaScriptなしでも読めます。</p></noscript>
+    <noscript><p>検索にはJavaScriptが必要です。<a href="/#find">気持ちや悩む場面から選ぶ</a>ことはJavaScriptなしでもできます。</p></noscript>
   </div>
   <script is:inline type="module">
     const input = document.querySelector("#search-input");
+    const form = document.querySelector("[data-search-form]");
     const status = document.querySelector("[data-search-status]");
     const container = document.querySelector("[data-search-results]");
     let pagefind;
     const escapeHtml = (value) => value.replace(/[&<>"']/g, (char) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[char] || char));
-    input.addEventListener("focus", async () => {
-      if (pagefind) return;
-      try { pagefind = await import("/pagefind/pagefind.js"); await pagefind.init(); }
-      catch { status.textContent = "検索は本番ビルドのプレビューで利用できます。"; }
-    }, { once: true });
-    input.addEventListener("input", async () => {
+    const loadSearch = async () => {
+      if (pagefind) return true;
+      try { pagefind = await import("/pagefind/pagefind.js"); await pagefind.init(); return true; }
+      catch { status.textContent = "検索を読み込めませんでした。気持ちや悩む場面から探してください。"; return false; }
+    };
+    const runSearch = async () => {
       const query = input.value.trim();
       if (!query) { container.replaceChildren(); status.textContent = "言葉を入力してください。"; return; }
-      if (!pagefind) { try { pagefind = await import("/pagefind/pagefind.js"); } catch { return; } }
+      if (!(await loadSearch())) return;
+      status.textContent = "探しています…";
       const search = await pagefind.debouncedSearch(query);
       if (!search) return;
-      const results = await Promise.all(search.results.slice(0, 20).map((item) => item.data()));
-      status.textContent = `${results.length}件見つかりました。`;
-      container.innerHTML = results.map((result) => `<article><h2><a href="${encodeURI(result.url)}">${escapeHtml(result.meta.title || "考えを読む")}</a></h2><p>${result.excerpt}</p></article>`).join("");
-    });
+      const found = await Promise.all(search.results.slice(0, 40).map((item) => item.data()));
+      const results = found.filter((result) => /^\/(thoughts|philosophers)\//.test(new URL(result.url, location.origin).pathname)).slice(0, 20);
+      status.textContent = results.length ? `「${query}」に近い考えが${results.length}件見つかりました。` : `「${query}」に近い考えは見つかりませんでした。別の短い言葉でも試せます。`;
+      container.innerHTML = results.map((result) => { const isPhilosopher = new URL(result.url, location.origin).pathname.startsWith("/philosophers/"); return `<article><p class="result-kind">${isPhilosopher ? "哲学者" : "考え"}</p><h2><a href="${encodeURI(result.url)}">${escapeHtml(result.meta.title || "考えを読む")}</a></h2><p>${result.excerpt}</p></article>`; }).join("");
+      history.replaceState(null, "", `?q=${encodeURIComponent(query)}`);
+    };
+    input.addEventListener("focus", loadSearch, { once: true });
+    input.addEventListener("input", runSearch);
+    form.addEventListener("submit", (event) => { event.preventDefault(); runSearch(); });
+    const initialQuery = new URLSearchParams(location.search).get("q")?.trim();
+    if (initialQuery) { input.value = initialQuery; runSearch(); }
   </script>
 </BaseLayout>
