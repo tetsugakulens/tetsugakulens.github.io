@@ -5,7 +5,7 @@ const examples = ["周りと比べてしまう", "進路が不安", "人間関�
 <BaseLayout title="悩みから哲学者を探す｜哲学レンズ" description="いま抱えている悩みや気持ちを入力して、自分に合う哲学者と考え方を見つけられます。">
   <div class="content-shell wide" data-pagefind-body data-pagefind-ignore>
     <nav class="breadcrumbs" aria-label="パンくず"><a href="/">ホーム</a> / <span>悩みから探す</span></nav>
-    <p class="overline">悩みから哲学者を見つける</p><h1>どんなことで悩んでいますか？</h1>
+    <h1>どんなことで悩んでいますか？</h1>
     <p class="lead">うまく文章にしなくても大丈夫です。気になる言葉を短く入力してください。</p>
     <form class="problem-search search-page-form" data-search-form>
       <label for="search-input">悩みを言葉で入力</label>
@@ -38,7 +38,7 @@ const examples = ["周りと比べてしまう", "進路が不安", "人間関�
       const found = await Promise.all(search.results.slice(0, 40).map((item) => item.data()));
       const results = found.filter((result) => /^\/(thoughts|philosophers)\//.test(new URL(result.url, location.origin).pathname)).slice(0, 20);
       status.textContent = results.length ? `「${query}」に近い考えが${results.length}件見つかりました。` : `「${query}」に近い考えは見つかりませんでした。別の短い言葉でも試せます。`;
-      container.innerHTML = results.map((result) => { const isPhilosopher = new URL(result.url, location.origin).pathname.startsWith("/philosophers/"); return `<article><p class="result-kind">${isPhilosopher ? "哲学者" : "考え"}</p><h2><a href="${encodeURI(result.url)}">${escapeHtml(result.meta.title || "考えを読む")}</a></h2><p>${result.excerpt}</p></article>`; }).join("");
+      container.innerHTML = results.map((result) => `<article><h2><a href="${encodeURI(result.url)}">${escapeHtml(result.meta.title || "考えを読む")}</a></h2><p>${result.excerpt}</p></article>`).join("");
       history.replaceState(null, "", `?q=${encodeURIComponent(query)}`);
     };
     input.addEventListener("focus", loadSearch, { once: true });

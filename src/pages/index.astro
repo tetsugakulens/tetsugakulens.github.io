@@ -13,7 +13,6 @@ const homeJsonLd = { "@context":"https://schema.org", "@type":"ItemList", name:"
 <BaseLayout title="哲学レンズ｜いまの気持ちに、哲学の見方を" description="仕事、人間関係、恋愛、将来などの悩みを、哲学者の考えをもとにした短い言葉から静かに見つめ直す縦型フィード。">
   <script is:inline type="application/ld+json" set:html={JSON.stringify(homeJsonLd)} />
   <section class="discovery-hub" id="find" aria-labelledby="find-title">
-    <p class="overline">悩みから哲学者を見つける</p>
     <h1 id="find-title">いま、何に悩んでいますか？</h1>
     <form class="problem-search" action="/search/" method="get">
       <label for="problem-input">悩みを言葉で入力</label>
@@ -25,10 +24,10 @@ const homeJsonLd = { "@context":"https://schema.org", "@type":"ItemList", name:"
     </form>
     <section class="choice-section" aria-labelledby="feeling-heading">
       <h2 id="feeling-heading">言葉にしづらければ、近い気持ちを選ぶ</h2>
-      <div class="choice-grid mood-choices">{moods.map((mood) => <a href={`/moods/${mood.slug}/`}><span>{mood.name}</span><small>合う哲学者を見る</small></a>)}</div>
+      <div class="choice-grid mood-choices">{moods.map((mood) => <a href={`/moods/${mood.slug}/`}>{mood.name}</a>)}</div>
     </section>
     <section class="choice-section" aria-labelledby="situation-heading">
-      <h2 id="situation-heading">どんなことで悩んでいますか？</h2>
+      <h2 id="situation-heading">悩んでいることを選ぶ</h2>
       <div class="choice-grid area-choices">{areas.map((area) => <a href={`/areas/${area.slug}/`}>{area.name}<span aria-hidden="true">→</span></a>)}</div>
     </section>
     <section class="choice-section" aria-labelledby="philosopher-heading">
@@ -44,7 +43,6 @@ const homeJsonLd = { "@context":"https://schema.org", "@type":"ItemList", name:"
       return philosopher && <div data-moods={thought.data.moodIds.join(" ")}><ThoughtCard {thought} {philosopher} {index} total={thoughts.length} /></div>;
     })}
   </section>
-  <nav class="mood-directory" aria-label="気持ち別ページ">{moods.map((mood) => <a href={`/moods/${mood.slug}/`}>{mood.name}</a>)}</nav>
   <script>
     const items = [...document.querySelectorAll<HTMLElement>("[data-feed-item]")];
     document.addEventListener("keydown", (event) => {

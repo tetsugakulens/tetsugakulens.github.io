@@ -41,9 +41,7 @@ body{overflow-x:clip}
 .choice-grid a{display:flex;min-width:0;min-height:58px;align-items:center;justify-content:space-between;padding:.75rem 1rem;border:1px solid var(--line);border-radius:.85rem;background:rgba(255,255,255,.025);text-decoration:none}
 .choice-grid a:hover,.choice-grid a:focus-visible{border-color:var(--acid);background:rgba(217,255,112,.08)}
 .mood-choices{grid-template-columns:repeat(2,minmax(0,1fr))}
-.mood-choices a{min-height:76px}
-.mood-choices a span{font-family:var(--serif);font-size:1.05rem}
-.mood-choices a small{color:var(--muted);font-size:.7rem}
+.mood-choices a{min-height:64px;font-family:var(--serif);font-size:1.05rem}
 .area-choices{grid-template-columns:repeat(4,minmax(0,1fr))}
 .philosopher-choices{grid-template-columns:repeat(3,minmax(0,1fr))}
 .browse-link{display:inline-flex;min-height:48px;align-items:center;gap:.55rem;margin-top:3rem}
@@ -55,11 +53,10 @@ body{overflow-x:clip}
 .quick-searches a{min-height:44px;padding:.5rem .8rem;border:1px solid var(--line);border-radius:.75rem;text-decoration:none}
 .search-status{margin:2rem 0 1rem;font-weight:700}
 .search-results mark{background:var(--acid);color:#111}
-.result-kind{margin:0;color:var(--acid);font-size:.72rem;font-weight:700;letter-spacing:.08em}
 .related-philosophers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;margin:1.5rem 0 3rem}
 .related-philosophers a{display:grid;gap:.25rem;min-height:90px;padding:1rem;border:1px solid var(--line);border-radius:.9rem;text-decoration:none}
 .related-philosophers span{color:var(--muted);font-size:.75rem;line-height:1.5}
 .error-actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:2rem}
 .error-actions a:not(.deep-link){display:inline-flex;min-height:48px;align-items:center;padding:.65rem 1.1rem;border:1px solid var(--line);border-radius:999px;text-decoration:none}
-@media(max-width:760px){.discovery-hub>h1{font-size:clamp(2.7rem,14vw,4.8rem)}.search-composer{grid-template-columns:1fr}.search-composer button{width:100%}.mood-choices,.area-choices,.philosopher-choices,.quick-searches,.related-philosophers{grid-template-columns:1fr}.mood-choices a small{font-size:.75rem}.choice-grid a{width:100%}.mood-directory{display:grid;grid-template-columns:1fr 1fr}.mood-directory a{min-width:0}.site-header{gap:.6rem}.site-header nav{gap:.75rem}.site-header nav a{font-size:.72rem}}
+@media(max-width:760px){.discovery-hub>h1{font-size:clamp(2.7rem,14vw,4.8rem)}.search-composer{grid-template-columns:1fr}.search-composer button{width:100%}.mood-choices,.area-choices,.philosopher-choices,.quick-searches,.related-philosophers{grid-template-columns:1fr}.choice-grid a{width:100%}.site-header{gap:.6rem}.site-header nav{gap:.75rem}.site-header nav a{font-size:.72rem}}
 @media(prefers-color-scheme:light){.discovery-hub{background:radial-gradient(circle at 82% 12%,#dce8ba 0,transparent 30%),linear-gradient(145deg,#f7f3e8,#e9ebdc)}.problem-search{background:rgba(255,255,255,.62)}.search-composer input{background:#fff}.choice-grid a{background:rgba(255,255,255,.35)}.feed-heading{background:#f5f2e9}}
