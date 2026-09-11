@@ -1,0 +1,13 @@
+---
+import { moodName, areaName } from "../lib/taxonomy";
+const { thoughts, philosophers, emptyMessage = "まだ考えがありません。" } = Astro.props;
+const philosopherMap = new Map(philosophers.map((item: any) => [item.id, item]));
+---
+{thoughts.length ? <div class="thought-list">
+  {thoughts.map((thought: any) => { const philosopher: any = philosopherMap.get(thought.data.philosopherId.id); return <article>
+    <p class="kind">思想をもとにした現代語の要約</p>
+    <h2><a href={`/thoughts/${thought.data.slug}/`}>{thought.data.statement}</a></h2>
+    <p>{thought.data.empathy}</p>
+    <div class="thought-meta"><a href={`/philosophers/${philosopher.data.slug}/`}>{philosopher.data.nameJa}</a><span>{moodName(thought.data.moodIds[0])}</span><span>{areaName(thought.data.areaIds[0])}</span></div>
+  </article>; })}
+</div> : <p>{emptyMessage}</p>}

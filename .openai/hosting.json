@@ -1,0 +1,7 @@
+{
+  "framework": "astro",
+  "build": {
+    "command": "pnpm build",
+    "outputDirectory": "dist"
+  }
+}

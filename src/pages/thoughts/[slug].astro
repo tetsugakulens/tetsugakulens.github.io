@@ -1,0 +1,44 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SaveButton from "../../components/SaveButton.astro";
+import SafetyNotice from "../../components/SafetyNotice.astro";
+import { moods, areas, moodName, areaName } from "../../lib/taxonomy";
+export async function getStaticPaths() {
+  const thoughts = await getCollection("thoughts");
+  return thoughts.filter((item) => item.data.published).map((thought) => ({ params: { slug: thought.data.slug }, props: { thought } }));
+}
+const { thought } = Astro.props;
+const philosophers = await getCollection("philosophers");
+const sources = await getCollection("sources");
+const philosopher = philosophers.find((item) => item.id === thought.data.philosopherId.id)!;
+const sourceMap = new Map(sources.map((source) => [source.id, source]));
+const title = `${thought.data.statement}｜${philosopher.data.nameJa}｜哲学レンズ`;
+const description = `${thought.data.empathy} ${thought.data.explanation}`.slice(0, 150);
+const jsonLd = {
+  "@context": "https://schema.org", "@type": "Article", headline: thought.data.statement,
+  description, author: { "@type": "Person", name: philosopher.data.nameJa },
+  dateModified: thought.data.reviewedAt.toISOString(), mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).href,
+};
+---
+<BaseLayout {title} {description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <article class="content-shell" data-pagefind-body>
+    <nav aria-label="パンくず"><a href="/">ホーム</a> / <span>考え</span></nav>
+    <p class="kind">思想をもとにした現代語の要約</p>
+    <p class="eyebrow">{thought.data.empathy}</p>
+    <h1>{thought.data.statement}</h1>
+    <p class="lead">{thought.data.explanation}</p>
+    {thought.data.moodIds.includes("meaning") && <SafetyNotice />}
+    <section aria-labelledby="question"><h2 id="question">自分に問いかけるなら</h2><p>{thought.data.reflectionQuestion}</p></section>
+    <SaveButton id={thought.data.id} />
+    <section aria-labelledby="connections"><h2 id="connections">この考えを別の入口から</h2><div class="tags">
+      {thought.data.moodIds.map((id: string) => { const item = moods.find((m) => m.id === id); return item && <a href={`/moods/${item.slug}/`}>{moodName(id)}</a>; })}
+      {thought.data.areaIds.map((id: string) => { const item = areas.find((a) => a.id === id); return item && <a href={`/areas/${item.slug}/`}>{areaName(id)}</a>; })}
+      <a href={`/philosophers/${philosopher.data.slug}/`}>{philosopher.data.nameJa}</a>
+    </div></section>
+    <section aria-labelledby="sources"><h2 id="sources">出典と編集方針</h2><p>この文章は直接引用ではなく、原典を参照して編集部が現代語で要約したものです。</p><ul>
+      {thought.data.sourceRefs.map((ref: { id: string }) => { const source = sourceMap.get(ref.id); return source && <li><a href={source.data.url} rel="external">{source.data.author}『{source.data.work}』{source.data.section}</a></li>; })}
+    </ul></section>
+  </article>
+</BaseLayout>

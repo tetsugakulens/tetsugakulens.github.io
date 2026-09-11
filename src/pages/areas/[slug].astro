@@ -1,0 +1,20 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ThoughtList from "../../components/ThoughtList.astro";
+import { areas } from "../../lib/taxonomy";
+export function getStaticPaths() { return areas.map((area) => ({params:{slug:area.slug},props:{area}})); }
+const { area } = Astro.props;
+const thoughts = (await getCollection("thoughts")).filter((x) => x.data.published && x.data.areaIds.includes(area.id));
+const philosophers = await getCollection("philosophers");
+const title = `${area.name}の悩みに役立つ哲学｜哲学レンズ`;
+const description = `${area.name}について考えが絡まったときに、見方を増やす哲学者の考えを短い言葉から探せます。`;
+---
+<BaseLayout {title} {description}>
+  <div class="content-shell wide" data-pagefind-body>
+    <nav class="breadcrumbs" aria-label="パンくず"><a href="/">ホーム</a> / <span>生活領域</span> / <span>{area.name}</span></nav>
+    <p class="overline">生活領域から探す</p><h1>{area.name}</h1>
+    <p class="lead">正解を押しつけず、いまの状況を見つめるための哲学。</p>
+    <ThoughtList {thoughts} {philosophers} />
+  </div>
+</BaseLayout>

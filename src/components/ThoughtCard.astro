@@ -1,0 +1,30 @@
+---
+import SaveButton from "./SaveButton.astro";
+import { areaName, moodName } from "../lib/taxonomy";
+const { thought, philosopher, index, total } = Astro.props;
+const tone = index % 4;
+---
+<article class={`thought-card tone-${tone}`} role="article" aria-posinset={index + 1} aria-setsize={total} tabindex="0" data-feed-item>
+  <div class="light" aria-hidden="true"></div>
+  <div class="card-grid">
+    <header class="philosopher-lockup">
+      <p class="eyebrow">{thought.data.empathy}</p>
+      <p class="counter" aria-label={`${total}件中${index + 1}件目`}>{String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</p>
+      <h2>{philosopher.data.nameJa}</h2>
+      <p class="original">{philosopher.data.nameOriginal}</p>
+    </header>
+    <div class="thought-copy">
+      <p class="kind">思想をもとにした現代語の要約</p>
+      <p class="statement">{thought.data.statement}</p>
+      <p class="explanation">{thought.data.explanation}</p>
+      <div class="tags" aria-label="分類">
+        {thought.data.moodIds.map((id: string) => <span>{moodName(id)}</span>)}
+        {thought.data.areaIds.map((id: string) => <span>{areaName(id)}</span>)}
+      </div>
+      <div class="actions">
+        <a class="deep-link" href={`/thoughts/${thought.data.slug}/`}>深く読む <span aria-hidden="true">↗</span></a>
+        <SaveButton id={thought.data.id} />
+      </div>
+    </div>
+  </div>
+</article>

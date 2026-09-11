@@ -1,0 +1,22 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ThoughtList from "../../components/ThoughtList.astro";
+import SafetyNotice from "../../components/SafetyNotice.astro";
+import { moods } from "../../lib/taxonomy";
+export function getStaticPaths() { return moods.map((mood) => ({params:{slug:mood.slug},props:{mood}})); }
+const { mood } = Astro.props;
+const thoughts = (await getCollection("thoughts")).filter((x) => x.data.published && x.data.moodIds.includes(mood.id));
+const philosophers = await getCollection("philosophers");
+const title = `${mood.name}ときに読む哲学｜哲学レンズ`;
+const description = `${mood.name}と感じるとき、急いで答えを出さずに眺めたい哲学者の考えを集めました。`;
+---
+<BaseLayout {title} {description}>
+  <div class="content-shell wide" data-pagefind-body>
+    <nav class="breadcrumbs" aria-label="パンくず"><a href="/">ホーム</a> / <span>今の気持ち</span> / <span>{mood.name}</span></nav>
+    <p class="overline">今の気持ちから探す</p><h1>{mood.name}</h1>
+    <p class="lead">この気持ちを急いで消さずに、見方をひとつ増やしてみる。</p>
+    {("sensitive" in mood && mood.sensitive) && <SafetyNotice />}
+    <ThoughtList {thoughts} {philosophers} />
+  </div>
+</BaseLayout>

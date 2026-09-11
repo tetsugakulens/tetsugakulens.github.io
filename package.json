@@ -1,0 +1,27 @@
+{
+  "name": "tetsugaku-lens",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.19.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && pagefind --site dist",
+    "preview": "astro preview",
+    "check": "astro check",
+    "validate:content": "node scripts/validate-content.mjs",
+    "seo:ranks": "node .claude/skills/seo-rank-watch/scripts/fetch_gsc_ranks.mjs --repo . --days 7",
+    "test": "pnpm validate:content && pnpm check && pnpm build && node scripts/validate-build.mjs"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.3.2"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "google-auth-library": "^11.0.2",
+    "pagefind": "^1.5.2",
+    "typescript": "^5.9.2"
+  }
+}

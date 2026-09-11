@@ -1,0 +1,32 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+const thoughts = (await getCollection("thoughts")).filter((x) => x.data.published);
+const philosophers = await getCollection("philosophers");
+const philosopherMap = new Map(philosophers.map((x) => [x.id, x.data.nameJa]));
+const savedIndex = thoughts.map((x) => ({id:x.data.id,slug:x.data.slug,statement:x.data.statement,empathy:x.data.empathy,philosopher:philosopherMap.get(x.data.philosopherId.id)}));
+---
+<BaseLayout title="保存した哲学｜哲学レンズ" description="この端末に保存した哲学の考えを、あとから静かに読み返せます。">
+  <div class="content-shell wide" data-pagefind-ignore>
+    <p class="overline">この端末だけの記録</p><h1>保存した哲学</h1>
+    <p>保存内容は会員登録なしで、このブラウザの中だけに残ります。閲覧履歴や悩みがサーバーへ送られることはありません。</p>
+    <div class="thought-list" data-saved-list></div>
+    <p data-saved-empty hidden>まだ保存した考えはありません。フィードの「保存」から残せます。</p>
+  </div>
+  <script is:inline define:vars={{ savedIndex }}>
+    const KEY = "tetsugaku-lens:saved:v1";
+    let ids = [];
+    try { ids = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { ids = []; }
+    const valid = ids.filter((id) => savedIndex.some((item) => item.id === id));
+    if (valid.length !== ids.length) localStorage.setItem(KEY, JSON.stringify(valid));
+    const list = document.querySelector("[data-saved-list]");
+    const empty = document.querySelector("[data-saved-empty]");
+    const render = () => {
+      const active = savedIndex.filter((item) => valid.includes(item.id));
+      empty.hidden = active.length > 0;
+      list.innerHTML = active.map((item) => `<article><p class="kind">${item.philosopher}</p><h2><a href="/thoughts/${item.slug}/">${item.statement}</a></h2><p>${item.empathy}</p><button class="remove-saved" data-remove="${item.id}">保存を解除</button></article>`).join("");
+      list.querySelectorAll("[data-remove]").forEach((button) => button.addEventListener("click", () => { const index = valid.indexOf(button.dataset.remove); if (index >= 0) valid.splice(index, 1); localStorage.setItem(KEY, JSON.stringify(valid)); render(); }));
+    };
+    render();
+  </script>
+</BaseLayout>

@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="哲学を探す｜哲学レンズ" description="悩み、気持ち、生活領域、哲学者名から、哲学レンズの考えを横断検索できます。">
+  <div class="content-shell wide" data-pagefind-body data-pagefind-ignore>
+    <p class="overline">言葉から見つける</p><h1>哲学を探す</h1>
+    <label class="search-label" for="search-input">気持ち・悩み・哲学者名</label>
+    <input class="search-input" id="search-input" type="search" inputmode="search" placeholder="例：失敗が怖い、進路、老子" autocomplete="off" />
+    <p class="search-status" aria-live="polite" data-search-status>言葉を入力してください。</p>
+    <div class="search-results" data-search-results></div>
+    <noscript><p>検索にはJavaScriptが必要です。<a href="/">フィード</a>、気持ち別、生活領域別、哲学者別のページはJavaScriptなしでも読めます。</p></noscript>
+  </div>
+  <script is:inline type="module">
+    const input = document.querySelector("#search-input");
+    const status = document.querySelector("[data-search-status]");
+    const container = document.querySelector("[data-search-results]");
+    let pagefind;
+    const escapeHtml = (value) => value.replace(/[&<>"']/g, (char) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[char] || char));
+    input.addEventListener("focus", async () => {
+      if (pagefind) return;
+      try { pagefind = await import("/pagefind/pagefind.js"); await pagefind.init(); }
+      catch { status.textContent = "検索は本番ビルドのプレビューで利用できます。"; }
+    }, { once: true });
+    input.addEventListener("input", async () => {
+      const query = input.value.trim();
+      if (!query) { container.replaceChildren(); status.textContent = "言葉を入力してください。"; return; }
+      if (!pagefind) { try { pagefind = await import("/pagefind/pagefind.js"); } catch { return; } }
+      const search = await pagefind.debouncedSearch(query);
+      if (!search) return;
+      const results = await Promise.all(search.results.slice(0, 20).map((item) => item.data()));
+      status.textContent = `${results.length}件見つかりました。`;
+      container.innerHTML = results.map((result) => `<article><h2><a href="${encodeURI(result.url)}">${escapeHtml(result.meta.title || "考えを読む")}</a></h2><p>${result.excerpt}</p></article>`).join("");
+    });
+  </script>
+</BaseLayout>

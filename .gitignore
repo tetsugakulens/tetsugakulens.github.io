@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*service-account*.json
+.DS_Store
+/work/
+/outputs/

@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "entries": [
+    {"keyword":"哲学 悩み","targetPath":"/","status":"active","nextReviewDate":null,"actions":[],"reviews":[]},
+    {"keyword":"人生に悩んだ時 哲学","targetPath":"/","status":"active","nextReviewDate":null,"actions":[],"reviews":[]},
+    {"keyword":"嫌われるのが怖い 哲学","targetPath":"/moods/fear-of-dislike/","status":"active","nextReviewDate":null,"actions":[],"reviews":[]},
+    {"keyword":"生きる意味 哲学","targetPath":"/moods/meaning-of-life/","status":"active","nextReviewDate":null,"actions":[],"reviews":[]},
+    {"keyword":"失敗が怖い 哲学","targetPath":"/moods/fear-of-failure/","status":"active","nextReviewDate":null,"actions":[],"reviews":[]},
+    {"keyword":"人間関係 哲学","targetPath":"/areas/relationships/","status":"active","nextReviewDate":null,"actions":[],"reviews":[]},
+    {"keyword":"進路 悩み 哲学","targetPath":"/areas/career/","status":"active","nextReviewDate":null,"actions":[],"reviews":[]},
+    {"keyword":"エピクテトス 考え方","targetPath":"/philosophers/epictetus/","status":"active","nextReviewDate":null,"actions":[],"reviews":[]}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "siteStatus": "prelaunch",
+  "keywords": [
+    {"keyword":"哲学 悩み","targetPath":"/","priority":"high","status":"active","rank":null},
+    {"keyword":"人生に悩んだ時 哲学","targetPath":"/","priority":"high","status":"active","rank":null},
+    {"keyword":"嫌われるのが怖い 哲学","targetPath":"/moods/fear-of-dislike/","priority":"high","status":"active","rank":null},
+    {"keyword":"生きる意味 哲学","targetPath":"/moods/meaning-of-life/","priority":"high","status":"active","rank":null},
+    {"keyword":"失敗が怖い 哲学","targetPath":"/moods/fear-of-failure/","priority":"medium","status":"active","rank":null},
+    {"keyword":"人間関係 哲学","targetPath":"/areas/relationships/","priority":"medium","status":"active","rank":null},
+    {"keyword":"進路 悩み 哲学","targetPath":"/areas/career/","priority":"medium","status":"active","rank":null},
+    {"keyword":"エピクテトス 考え方","targetPath":"/philosophers/epictetus/","priority":"medium","status":"active","rank":null}
+  ]
+}

@@ -1,0 +1,26 @@
+---
+const { id } = Astro.props;
+---
+<button class="save-button" type="button" data-save-id={id} aria-pressed="false">
+  <span aria-hidden="true">◇</span><span data-save-label>保存</span>
+</button>
+<script>
+  const KEY = "tetsugaku-lens:saved:v1";
+  const getSaved = () => { try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { return []; } };
+  document.querySelectorAll<HTMLButtonElement>("[data-save-id]").forEach((button) => {
+    const id = button.dataset.saveId!;
+    const render = () => {
+      const active = getSaved().includes(id);
+      button.setAttribute("aria-pressed", String(active));
+      const label = button.querySelector("[data-save-label]");
+      if (label) label.textContent = active ? "保存済み" : "保存";
+    };
+    render();
+    button.addEventListener("click", () => {
+      const saved = getSaved();
+      const next = saved.includes(id) ? saved.filter((item: string) => item !== id) : [...saved, id];
+      localStorage.setItem(KEY, JSON.stringify(next));
+      render();
+    });
+  });
+</script>
