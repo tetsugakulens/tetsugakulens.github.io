@@ -8,8 +8,9 @@ const arg = (name, fallback) => { const i = process.argv.indexOf(name); return i
 const repo = path.resolve(arg("--repo", "."));
 const days = Number.parseInt(arg("--days", "7"), 10);
 if (!Number.isInteger(days) || days < 1 || days > 90) throw new Error("--days は1〜90の整数で指定してください。");
-const siteUrl = process.env.GSC_SITE_URL;
-if (!siteUrl) throw new Error("GSC_SITE_URL が未設定です。認証情報の値そのものは表示しません。");
+const siteUrl = process.env.GSC_SITE_URL || "https://tetsugakulens.github.io/";
+const localCredentials = path.join(repo, ".secrets", "gsc-service-account.json");
+const credentialsFile = process.env.GOOGLE_APPLICATION_CREDENTIALS || localCredentials;
 
 const seoDir = path.join(repo, "data", "seo");
 const watchPath = path.join(seoDir, "watchwords.json");
@@ -27,7 +28,15 @@ if (history.records.some((record) => record.measuredAt.slice(0, 10) === isoDay(e
   throw new Error("本日の順位レコードは既に存在します。履歴保護のため上書きしません。");
 }
 
-const auth = new GoogleAuth({ scopes: ["https://www.googleapis.com/auth/webmasters.readonly"] });
+try {
+  await fs.access(credentialsFile);
+} catch {
+  throw new Error("GSC認証ファイルがありません。.secrets/gsc-service-account.json を設定してください。秘密情報の内容は表示しません。");
+}
+const auth = new GoogleAuth({
+  scopes: ["https://www.googleapis.com/auth/webmasters.readonly"],
+  keyFilename: credentialsFile,
+});
 const client = await auth.getClient();
 const endpoint = `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`;
 const response = await client.request({ url:endpoint, method:"POST", data:{startDate:isoDay(start),endDate:isoDay(end),dimensions:["query","page"],rowLimit:25000,dataState:"final"} });

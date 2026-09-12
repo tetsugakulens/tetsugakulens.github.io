@@ -30,10 +30,12 @@ pnpm test
 
 ## SEO Rank Watch
 
-認証値は `.env` へ置かず、実行環境の `GOOGLE_APPLICATION_CREDENTIALS` と `GSC_SITE_URL` から渡します。サービスアカウントには対象Search Consoleプロパティの閲覧権限が必要です。
+認証値はGitへ保存しません。Google Search Consoleの閲覧専用サービスアカウント鍵を `.secrets/gsc-service-account.json` に置くか、実行環境の `GOOGLE_APPLICATION_CREDENTIALS` で別の安全な場所を指定します。`.secrets/` はGit対象外です。
 
 ```sh
-GSC_SITE_URL=https://tetsugakulens.github.io/ pnpm seo:ranks
+pnpm seo:ranks
 ```
 
 公開直後でGSCの実測値がない監視語は `rank: null` のまま保持します。インプレッション発生後に初回測定し、`.claude/skills/seo-rank-watch/SKILL.md` の「1キーワード・1改善・7日観察」を厳守します。
+
+自動更新では、CodexのSEO Rank Watchが測定と1件の改善を行い、テスト成功後に `main` へpushします。pushを受けたGitHub Actionsが静的サイトを再構築し、GitHub Pagesへ公開します。
