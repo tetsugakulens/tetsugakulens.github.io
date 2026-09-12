@@ -14,11 +14,11 @@ pnpm dev
 本番相当の検索を確認する場合は、Pagefindインデックスを生成してから静的配信します。
 
 ```sh
-SITE_URL=https://example.com pnpm build
+SITE_URL=https://tetsugakulens.github.io pnpm build
 pnpm exec pagefind --site dist --serve
 ```
 
-独自ドメインが決まるまでは公開しません。公開時に `SITE_URL` を本番URLへ設定してください。
+現在の公開URLは `https://tetsugakulens.github.io/` です。将来独自ドメインへ移行するときは `SITE_URL` とSearch Consoleのプロパティを同時に更新します。
 
 ## 品質確認
 
@@ -33,7 +33,7 @@ pnpm test
 認証値は `.env` へ置かず、実行環境の `GOOGLE_APPLICATION_CREDENTIALS` と `GSC_SITE_URL` から渡します。サービスアカウントには対象Search Consoleプロパティの閲覧権限が必要です。
 
 ```sh
-GSC_SITE_URL=sc-domain:example.com pnpm seo:ranks
+GSC_SITE_URL=https://tetsugakulens.github.io/ pnpm seo:ranks
 ```
 
-公開前の監視語は `rank: null` です。公開・GSC接続・インプレッション発生後に初回測定し、`.claude/skills/seo-rank-watch/SKILL.md` の「1キーワード・1改善・7日観察」を厳守します。
+公開直後でGSCの実測値がない監視語は `rank: null` のまま保持します。インプレッション発生後に初回測定し、`.claude/skills/seo-rank-watch/SKILL.md` の「1キーワード・1改善・7日観察」を厳守します。

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "siteStatus": "prelaunch",
+  "siteStatus": "live",
   "keywords": [
     {"keyword":"哲学 悩み","targetPath":"/","priority":"high","status":"active","rank":null},
     {"keyword":"人生に悩んだ時 哲学","targetPath":"/","priority":"high","status":"active","rank":null},

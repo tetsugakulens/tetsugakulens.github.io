@@ -41,8 +41,11 @@ const walk = async (directory) => { for (const entry of await fs.readdir(directo
 await walk(dist);
 const titles = new Set();
 for (const file of pages) {
-  const html = await fs.readFile(file,"utf8");
   const relative = path.relative(dist,file);
+  // Search Console's verification file is a provider-owned one-line response,
+  // not a public content page with metadata.
+  if (/^google[a-z0-9]+\.html$/i.test(relative)) continue;
+  const html = await fs.readFile(file,"utf8");
   const title = html.match(/<title>([^<]+)<\/title>/)?.[1]?.trim();
   const description = html.match(/<meta name="description" content="([^"]+)"/)?.[1]?.trim();
   if (!title) fail(`${relative} にtitleがありません`);
